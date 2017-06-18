@@ -1,4 +1,4 @@
-#Elastic Search Notes
+# Elastic Search Notes
 
 ## Running & Installing
 
