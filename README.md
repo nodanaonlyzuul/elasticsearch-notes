@@ -46,6 +46,14 @@ curl -u elastic:changeme -XPOST 'localhost:9200/customer/external?pretty&pretty'
 
 Note this is a **POST**
 
+### Bulk Loading
+
+```bash
+curl -u elastic:changeme -H "Content-Type: application/json" -XPOST 'localhost:9200/bank/account/_bulk?pretty&refresh' --data-binary "@./resources/accounts.json"
+
+curl -u elastic:changeme 'localhost:9200/_cat/indices?v'
+```
+
 ### Fetching a Document
 
 ```bash
@@ -102,7 +110,6 @@ curl -u elastic:changeme -XDELETE 'localhost:9200/customer/external/2?pretty&pre
 
 There's also a way to [delete by query](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html).
 
-
 ### Batch Processing
 
 See the [\__bulk_ API documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html) for more.
@@ -133,3 +140,28 @@ If a single action fails for whatever reason, it will continue to process the
 remainder of the actions after it. When the bulk API returns, it will provide a
 status for each action (in the same order it was sent in) so that you can check
 if a specific action failed or not.
+
+### Searching
+
+You can search by GET using params or use an expressive syntax in the POST.
+
+The GET:
+
+```
+curl -u elastic:changeme -XGET 'localhost:9200/customers/_search?q=*&sort=account_number:asc&pretty&pretty'
+```
+
+Look into the [JSON Query DSL](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html).
+
+The Equivelant POST:
+
+```bash
+curl -XGET 'localhost:9200/bank/_search?pretty' -H 'Content-Type: application/json' -d'
+{
+  "query": { "match_all": {} },
+  "sort": [
+    { "account_number": "asc" }
+  ]
+}
+'
+```
